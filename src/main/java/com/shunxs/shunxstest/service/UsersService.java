@@ -3,6 +3,7 @@ package com.shunxs.shunxstest.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import com.shunxs.shunxstest.domain.Users;
+import com.shunxs.shunxstest.domain.request.FollowRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,4 +22,6 @@ public interface UsersService extends IService<Users> {
     Users userLogin(String nickname, HttpServletRequest request);
 
     String uploadAvatar(MultipartFile file, HttpServletRequest request) throws IOException;
+
+
 }

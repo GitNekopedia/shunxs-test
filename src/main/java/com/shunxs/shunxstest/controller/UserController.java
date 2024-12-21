@@ -5,12 +5,15 @@ import com.shunxs.shunxstest.BaseResponse;
 import com.shunxs.shunxstest.common.ErrorCode;
 import com.shunxs.shunxstest.common.ResultUtils;
 import com.shunxs.shunxstest.domain.Users;
+import com.shunxs.shunxstest.domain.request.FollowRequest;
 import com.shunxs.shunxstest.domain.request.UserLoginRequest;
 import com.shunxs.shunxstest.mapper.UsersMapper;
+import com.shunxs.shunxstest.service.FollowsService;
 import com.shunxs.shunxstest.service.UsersService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -27,6 +31,8 @@ public class UserController {
     private UsersService usersService;
     @Autowired
     private UsersMapper usersMapper;
+    @Autowired
+    private FollowsService followsService;
 
     @PostMapping("/register")
     public ResponseEntity<?> userRegister(@RequestParam String nickname){
@@ -67,6 +73,27 @@ public class UserController {
             return ResultUtils.error(ErrorCode.SYSTEM_ERROR, "头像上传失败，请重试", e.getMessage());
         }
 
+    }
+
+    @PostMapping("/follow")
+    public BaseResponse<?> addFollow(@RequestBody FollowRequest followRequest, HttpServletRequest request){
+        boolean result = followsService.addFollow(followRequest, request);
+        if (result){
+            return ResultUtils.success("关注成功");
+        } else {
+            return ResultUtils.error(ErrorCode.SYSTEM_ERROR, "关注失败");
+        }
+    }
+
+    @GetMapping("followers")
+    public BaseResponse<?> getFollowers(
+            HttpServletRequest request,
+            @RequestParam(defaultValue = "") String nicknameSearch,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
+            ){
+        List<Users> followers = followsService.getFollowers(request, nicknameSearch, page, size);
+        return ResultUtils.success(followers);
     }
 
 

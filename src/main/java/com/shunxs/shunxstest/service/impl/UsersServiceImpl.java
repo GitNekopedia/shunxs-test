@@ -3,6 +3,8 @@ package com.shunxs.shunxstest.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.shunxs.shunxstest.domain.Users;
+import com.shunxs.shunxstest.domain.request.FollowRequest;
+import com.shunxs.shunxstest.mapper.FollowsMapper;
 import com.shunxs.shunxstest.mapper.UsersMapper;
 import com.shunxs.shunxstest.service.UsersService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,6 +29,7 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users>
 
     private final UsersMapper usersMapper;
     private static final String UPLOAD_DIR = "uploads/avatars/";
+
 
 
     public UsersServiceImpl(UsersMapper usersMapper) {
@@ -79,6 +82,8 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users>
 
         return avatarUrl;
     }
+
+
 }
 
 
