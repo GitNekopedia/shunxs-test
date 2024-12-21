@@ -2,16 +2,15 @@ package com.shunxs.shunxstest.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.shunxs.shunxstest.common.ErrorCode;
 import com.shunxs.shunxstest.domain.Users;
-import com.shunxs.shunxstest.domain.request.FollowRequest;
-import com.shunxs.shunxstest.mapper.FollowsMapper;
+import com.shunxs.shunxstest.exception.BusinessException;
 import com.shunxs.shunxstest.mapper.UsersMapper;
 import com.shunxs.shunxstest.service.UsersService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -64,7 +63,7 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users>
         HttpSession session = request.getSession();
         Users currentUser = (Users) session.getAttribute(USER_LOGIN_STATE);
         if (currentUser == null) {
-            throw new IllegalStateException("用户未登录");
+            throw new BusinessException(ErrorCode.NOT_LOGIN);
         }
         String fileName = file.getOriginalFilename();
         String uniqueFileName = System.currentTimeMillis() + "_" + fileName;

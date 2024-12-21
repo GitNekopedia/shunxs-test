@@ -7,21 +7,19 @@ import com.shunxs.shunxstest.common.ResultUtils;
 import com.shunxs.shunxstest.domain.Users;
 import com.shunxs.shunxstest.domain.request.FollowRequest;
 import com.shunxs.shunxstest.domain.request.UserLoginRequest;
-import com.shunxs.shunxstest.mapper.UsersMapper;
+
 import com.shunxs.shunxstest.service.FollowsService;
 import com.shunxs.shunxstest.service.UsersService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.bind.DefaultValue;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+
 import java.util.List;
 
 @RestController
@@ -30,21 +28,19 @@ public class UserController {
     @Autowired
     private UsersService usersService;
     @Autowired
-    private UsersMapper usersMapper;
-    @Autowired
     private FollowsService followsService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> userRegister(@RequestParam String nickname){
+    public BaseResponse<Users> userRegister(@RequestParam String nickname){
         if (nickname == null || nickname.trim().isEmpty()){
-            return ResponseEntity.badRequest().body("Nickname cannot be empty");
+            return ResultUtils.error(ErrorCode.NULL_ERROR, "昵称不能为空", null);
         }
 
         try {
             Users newUser = usersService.userRegister(nickname);
-            return ResponseEntity.ok(newUser);
+            return ResultUtils.success(newUser);
         } catch (Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResultUtils.error(ErrorCode.SYSTEM_ERROR, "注册失败", e.getMessage());
         }
     }
 
@@ -76,7 +72,7 @@ public class UserController {
     }
 
     @PostMapping("/follow")
-    public BaseResponse<?> addFollow(@RequestBody FollowRequest followRequest, HttpServletRequest request){
+    public BaseResponse<String> addFollow(@RequestBody FollowRequest followRequest, HttpServletRequest request){
         boolean result = followsService.addFollow(followRequest, request);
         if (result){
             return ResultUtils.success("关注成功");
@@ -86,7 +82,7 @@ public class UserController {
     }
 
     @GetMapping("followers")
-    public BaseResponse<?> getFollowers(
+    public BaseResponse<List<Users>> getFollowers(
             HttpServletRequest request,
             @RequestParam(defaultValue = "") String nicknameSearch,
             @RequestParam(defaultValue = "1") int page,

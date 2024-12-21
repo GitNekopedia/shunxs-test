@@ -3,9 +3,11 @@ package com.shunxs.shunxstest.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.shunxs.shunxstest.common.ErrorCode;
 import com.shunxs.shunxstest.domain.Follows;
 import com.shunxs.shunxstest.domain.Users;
 import com.shunxs.shunxstest.domain.request.FollowRequest;
+import com.shunxs.shunxstest.exception.BusinessException;
 import com.shunxs.shunxstest.mapper.FollowsMapper;
 import com.shunxs.shunxstest.mapper.UsersMapper;
 import com.shunxs.shunxstest.service.FollowsService;
@@ -40,7 +42,7 @@ public class FollowsServiceImpl extends ServiceImpl<FollowsMapper, Follows>
         HttpSession session = request.getSession();
         Users currentUser = (Users) session.getAttribute(USER_LOGIN_STATE);
         if (currentUser == null) {
-            throw new IllegalStateException("用户未登录");
+            throw new BusinessException(ErrorCode.NOT_LOGIN);
         }
 
         // 获取关注用户的ID
@@ -77,7 +79,7 @@ public class FollowsServiceImpl extends ServiceImpl<FollowsMapper, Follows>
         HttpSession session = request.getSession();
         Users currentUser = (Users) session.getAttribute(USER_LOGIN_STATE);
         if (currentUser == null) {
-            throw new IllegalStateException("用户未登录");
+            throw new BusinessException(ErrorCode.NOT_LOGIN);
         }
 
         // 创建分页对象
